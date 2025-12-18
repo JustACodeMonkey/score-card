@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="t3">
+  <!-- base shadow -->
+  <ellipse cx="32" cy="48" rx="20" ry="4" fill="#212121" opacity="0.12" />
+  
+  <!-- golden token (larger) -->
+  <circle cx="32" cy="30" r="20" fill="#f59e0b" stroke="#b45309" stroke-width="1" />
+
+  <!-- star emblem (slightly larger) -->
+  <g transform="translate(32,30) scale(1.25)" fill="#fff" stroke="#ffffff" stroke-width="0">
+    <path d="M0,-8 L2.4,-2.2 L8.2,-2.2 L3.6,1.2 L5.8,7 L0,3.6 L-5.8,7 L-3.6,1.2 L-8.2,-2.2 L-2.4,-2.2 Z" />
+  </g>
+
+  <!-- larger score badge -->
+  <g transform="translate(46,12)">
+    <circle cx="0" cy="0" r="12" fill="#ef4444" />
+    <text x="0" y="4.5" font-family="Inter, Arial, sans-serif" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">10</text>
+  </g>
+</svg>
