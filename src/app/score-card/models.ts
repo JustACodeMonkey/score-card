@@ -15,6 +15,8 @@ export interface ScoreCard {
   name: string;
   players: Player[];
   rounds: Round[];
+  // whether rounds are shown newest-first (true) or oldest-first (false)
+  roundsNewestFirst?: boolean;
   createdAt: string;
   // optional finished timestamp when the game has ended
   finishedAt?: string | null;

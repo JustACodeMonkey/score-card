@@ -38,6 +38,7 @@ export class ScoreService {
       name,
       players,
       rounds: [],
+      roundsNewestFirst: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

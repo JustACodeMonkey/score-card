@@ -1,14 +1,13 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'score-cards', pathMatch: 'full' },
   {
-    path: 'score-cards',
+    path: '',
     loadComponent: () =>
       import('./score-card/score-card-editor.component').then((m) => m.ScoreCardEditor),
   },
   {
-    path: 'score-cards/:id/play',
+    path: ':id',
     loadComponent: () =>
       import('./score-card/score-card-play.component').then((m) => m.ScoreCardPlay),
   },

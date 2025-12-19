@@ -72,7 +72,7 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
           <div class="mt-3">
             <a
               class="flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 cursor-pointer"
-              [routerLink]="['/score-cards']"
+              [routerLink]="['/']"
             >
               <ng-icon name="iconoir:arrow-left-circle" size="20px" />
               Back to Score Cards
@@ -155,7 +155,9 @@ export class ScoreCardPlay {
   protected scoreCard: ScoreCard | null = null;
   protected newRoundLabel = '';
   protected totals: Record<string, number> = {};
-  protected roundsNewestFirst = true;
+  protected get roundsNewestFirst() {
+    return !!this.scoreCard?.roundsNewestFirst;
+  }
 
   private id: string | null = null;
 
@@ -178,7 +180,9 @@ export class ScoreCardPlay {
   }
 
   protected toggleRoundOrder() {
-    this.roundsNewestFirst = !this.roundsNewestFirst;
+    if (!this.scoreCard) return;
+    this.scoreCard.roundsNewestFirst = !this.roundsNewestFirst;
+    this.svc.save(this.scoreCard);
   }
 
   protected removeRound(roundId: string) {

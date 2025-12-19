@@ -1,7 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ScoreService } from './score.service';
 import { Player, ScoreCard } from './models';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -113,7 +113,7 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
                 <a
                   class="flex text-blue-600 hover:text-blue-700
                   focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-gray-300 rounded-full p-1"
-                  [routerLink]="['/score-cards', c.id, 'play']"
+                  [routerLink]="[c.id]"
                   >@if (c.finishedAt) {
                   <ng-icon name="iconoir:eye" size="24px" class="align-self-center" /> } @else {
                   <ng-icon name="iconoir:play" size="24px" class="align-self-center" /> }</a
@@ -178,7 +178,10 @@ export class ScoreCardEditor {
   protected expanded: Record<string, boolean> = {};
   protected confirmDelete: Record<string, boolean> = {};
 
-  constructor(private svc: ScoreService) {
+  private svc = inject(ScoreService);
+  private router = inject(Router);
+
+  constructor() {
     this.loadCards();
   }
 
@@ -227,7 +230,8 @@ export class ScoreCardEditor {
     const scoreCard = this.svc.create(this.name.trim(), this.players.slice());
     this.name = '';
     this.players = [];
-    this.loadCards();
+    // navigate to the newly created game's play view
+    this.router.navigate([scoreCard.id]);
   }
 
   // icon selection removed; single app logo at /public/score-card-icon.svg is used

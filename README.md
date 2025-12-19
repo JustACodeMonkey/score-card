@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/12c820a7-7214-48af-a581-bedc4d14e259/deploy-status)](https://app.netlify.com/projects/simple-score-card/deploys)
+
 # ScoreCard
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
