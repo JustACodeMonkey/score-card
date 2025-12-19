@@ -11,4 +11,8 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./score-card/score-card-play.component').then((m) => m.ScoreCardPlay),
   },
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];
