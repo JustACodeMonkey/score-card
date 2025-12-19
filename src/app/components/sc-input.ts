@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <label class="flex flex-col gap-1 text-sm text-slate-700">
-      <span class="line-clamp-1">{{ label() }}</span>
+      @if (label()) { <span class="line-clamp-1">{{ label() }}</span> }
       <input
         [attr.name]="name()"
         [type]="type()"

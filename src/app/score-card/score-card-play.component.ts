@@ -15,10 +15,11 @@ import {
   iconoirSortUp,
 } from '@ng-icons/iconoir';
 import { ScInput } from '../components/sc-input';
+import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
 
 @Component({
   selector: 'score-card-play',
-  imports: [CommonModule, FormsModule, RouterLink, NgIcon, ScInput],
+  imports: [CommonModule, FormsModule, RouterLink, NgIcon, ScIconButton, ScInput],
   providers: [
     provideIcons({
       iconoirArrowLeftCircle,
@@ -39,21 +40,19 @@ import { ScInput } from '../components/sc-input';
             <h2 class="text-lg font-medium">{{ scoreCard.name }}</h2>
             <div class="text-right shrink-0">
               @if (scoreCard.finishedAt) {
-              <button
-                class="flex text-blue-500 rounded hover:text-blue-600 cursor-pointer transition-colors"
+              <sc-icon-button
+                visual="primary"
                 (click)="restartGame()"
                 title="Restart game"
-              >
-                <ng-icon name="iconoir:play" size="24px" class="align-self-center" />
-              </button>
+                icon="iconoir:play"
+              />
               } @else {
-              <button
-                class="flex text-red-400 rounded hover:text-red-600 cursor-pointer transition-colors"
+              <sc-icon-button
+                visual="danger"
                 (click)="endGame()"
                 title="Stop game"
-              >
-                <ng-icon name="iconoir:pause" size="24px" class="align-self-center" />
-              </button>
+                icon="iconoir:pause"
+              />
               }
             </div>
           </div>
@@ -72,7 +71,7 @@ import { ScInput } from '../components/sc-input';
           </div>
           <div class="mt-3">
             <a
-              class="flex items-center justify-center gap-2 bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 cursor-pointer"
+              class="flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 cursor-pointer"
               [routerLink]="['/score-cards']"
             >
               <ng-icon name="iconoir:arrow-left-circle" size="20px" />
@@ -95,29 +94,23 @@ import { ScInput } from '../components/sc-input';
                 "
                 class="w-full"
               />
-              <button
-                class="flex text-blue-500 rounded hover:text-blue-600 disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
+              <sc-icon-button
+                visual="primary"
                 (click)="addRound()"
-                [disabled]="!newRoundLabel.trim() || scoreCard.finishedAt"
+                [disabled]="!newRoundLabel.trim() || !!scoreCard.finishedAt"
                 title="Add Round"
-              >
-                <ng-icon name="iconoir:plus-circle" size="24px" />
-              </button>
+                icon="iconoir:plus-circle"
+              />
             </div>
 
             <div class="flex items-center justify-between mb-2 mt-8">
               <h3 class="text-md font-medium mb-2">Rounds</h3>
-              <button
-                class="flex text-slate-500 rounded hover:bg-slate-50 hover:text-slate-600 cursor-pointer"
+              <sc-icon-button
+                visual="ghost"
                 (click)="toggleRoundOrder()"
                 [title]="roundsNewestFirst ? 'Show oldest first' : 'Show newest first'"
-              >
-                @if (roundsNewestFirst) {
-                <ng-icon name="iconoir:sort-down" size="24px" class="align-self-center" />
-                } @else {
-                <ng-icon name="iconoir:sort-up" size="24px" class="align-self-center" />
-                }
-              </button>
+                [icon]="roundsNewestFirst ? 'iconoir:sort-down' : 'iconoir:sort-up'"
+              />
             </div>
             <div class="space-y-4">
               @for (r of (roundsNewestFirst ? scoreCard.rounds.slice().reverse() :
@@ -125,16 +118,15 @@ import { ScInput } from '../components/sc-input';
               <div class="border rounded p-3">
                 <div class="flex items-center justify-between mb-2">
                   <div class="font-medium">{{ r.label }}</div>
-                  <button
+                  <sc-icon-button
+                    visual="ghost"
                     title="Remove round"
-                    class="flex text-slate-600 hover:text-slate-800 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed rounded"
                     (click)="removeRound(r.id)"
-                    [disabled]="scoreCard.finishedAt"
-                  >
-                    <ng-icon name="iconoir:minus" size="20px" />
-                  </button>
+                    [disabled]="!!scoreCard.finishedAt"
+                    icon="iconoir:minus"
+                  />
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                   @for (p of scoreCard.players; track p.id) {
                   <sc-input
                     [label]="p.name"

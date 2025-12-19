@@ -14,11 +14,12 @@ import {
 } from '@ng-icons/iconoir';
 import { ScInput } from '../components/sc-input';
 import { ScTag } from '../components/sc-tag';
-import { ScButton } from '../components/sc-button';
+import { ScButton } from '../components/sc-button/sc-button';
+import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
 
 @Component({
   selector: 'score-card-editor',
-  imports: [CommonModule, FormsModule, RouterLink, NgIcon, ScInput, ScTag, ScButton],
+  imports: [CommonModule, FormsModule, RouterLink, NgIcon, ScInput, ScTag, ScButton, ScIconButton],
   providers: [
     provideIcons({ iconoirEditPencil, iconoirEye, iconoirPlay, iconoirPlusCircle, iconoirXmark }),
   ],
@@ -55,13 +56,11 @@ import { ScButton } from '../components/sc-button';
               (keyup.enter)="addPlayer()"
               class="w-full"
             />
-            <sc-button
+            <sc-icon-button
+              visual="primary"
               (click)="addPlayer()"
-              color="icon-only"
               title="Add Player/Team"
               icon="iconoir:plus-circle"
-              iconSize="24px"
-              buttonClass="text-blue-500! hover:text-blue-600! rounded-full px-1! py-1!"
             />
           </div>
 
@@ -83,7 +82,7 @@ import { ScButton } from '../components/sc-button';
 
           <div class="mt-4">
             <sc-button
-              color="secondary"
+              visual="secondary"
               (click)="create()"
               [disabled]="!canCreate"
               icon="iconoir:plus-circle"
@@ -112,20 +111,18 @@ import { ScButton } from '../components/sc-button';
               </div>
               <div class="flex items-center gap-1">
                 <a
-                  class="flex text-blue-500 hover:text-blue-600 hover:bg-slate-100 
-                  focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-gray-300 rounded-full p-1"
+                  class="flex text-blue-600 hover:text-blue-700
+                  focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-gray-300 rounded-full p-1"
                   [routerLink]="['/score-cards', c.id, 'play']"
                   >@if (c.finishedAt) {
                   <ng-icon name="iconoir:eye" size="24px" class="align-self-center" /> } @else {
                   <ng-icon name="iconoir:play" size="24px" class="align-self-center" /> }</a
                 >
-                <sc-button
+                <sc-icon-button
+                  visual="ghost"
                   (click)="toggleManage(c.id)"
-                  color="icon-only"
                   title="Edit game settings"
-                  icon="iconoir:edit-pencil"
-                  iconSize="24px"
-                  buttonClass="text-slate-500! hover:text-slate-700! rounded-full px-1! py-1!"
+                  [icon]="expanded[c.id] ? 'iconoir:xmark' : 'iconoir:edit-pencil'"
                 />
               </div>
             </li>
@@ -143,6 +140,28 @@ import { ScButton } from '../components/sc-button';
                 />
                 }
               </div>
+
+              <div class="mt-4 border border-red-300 bg-red-50 p-3 rounded">
+                <div class="text-sm font-medium text-red-800 mb-1">Danger Zone</div>
+                <p class="text-xs mb-3">
+                  Deleting a game will remove all rounds and scores. This cannot be undone.
+                </p>
+
+                @if (!confirmDelete[c.id]) {
+                <div class="flex gap-2">
+                  <sc-button visual="danger" (click)="confirmDeleteCard(c.id)" title="Delete game">
+                    Delete Game
+                  </sc-button>
+                </div>
+                } @else {
+                <div class="flex gap-2">
+                  <sc-button visual="danger" (click)="deleteCard(c.id)" title="Confirm delete">
+                    Confirm Delete
+                  </sc-button>
+                  <sc-button visual="secondary" (click)="cancelDeleteCard(c.id)">Cancel</sc-button>
+                </div>
+                }
+              </div>
             </li>
             } }
           </ul>
@@ -157,6 +176,7 @@ export class ScoreCardEditor {
   protected players: Player[] = [];
   protected scoreCards: ScoreCard[] = [];
   protected expanded: Record<string, boolean> = {};
+  protected confirmDelete: Record<string, boolean> = {};
 
   constructor(private svc: ScoreService) {
     this.loadCards();
@@ -176,6 +196,21 @@ export class ScoreCardEditor {
 
   protected toggleManage(id: string) {
     this.expanded[id] = !this.expanded[id];
+  }
+
+  protected confirmDeleteCard(id: string) {
+    this.confirmDelete[id] = true;
+  }
+
+  protected cancelDeleteCard(id: string) {
+    this.confirmDelete[id] = false;
+  }
+
+  protected deleteCard(id: string) {
+    this.svc.delete(id);
+    this.loadCards();
+    if (this.expanded[id]) this.expanded[id] = false;
+    this.confirmDelete[id] = false;
   }
 
   protected removePlayerFromCard(cardId: string, playerId: string) {
