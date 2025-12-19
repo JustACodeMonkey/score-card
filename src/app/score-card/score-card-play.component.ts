@@ -8,25 +8,26 @@ import { ScoreCard } from './models';
 import {
   iconoirArrowLeftCircle,
   iconoirMinus,
+  iconoirPause,
+  iconoirPlay,
   iconoirPlusCircle,
-  iconoirRestart,
   iconoirSortDown,
   iconoirSortUp,
-  iconoirXmarkCircle,
 } from '@ng-icons/iconoir';
+import { ScInput } from '../components/sc-input';
 
 @Component({
   selector: 'score-card-play',
-  imports: [CommonModule, FormsModule, RouterLink, NgIcon],
+  imports: [CommonModule, FormsModule, RouterLink, NgIcon, ScInput],
   providers: [
     provideIcons({
       iconoirArrowLeftCircle,
       iconoirMinus,
+      iconoirPause,
+      iconoirPlay,
       iconoirPlusCircle,
-      iconoirRestart,
       iconoirSortDown,
       iconoirSortUp,
-      iconoirXmarkCircle,
     }),
   ],
   template: `
@@ -39,19 +40,19 @@ import {
             <div class="text-right shrink-0">
               @if (scoreCard.finishedAt) {
               <button
-                class="flex text-slate-500 rounded hover:text-slate-600 cursor-pointer"
+                class="flex text-blue-500 rounded hover:text-blue-600 cursor-pointer transition-colors"
                 (click)="restartGame()"
                 title="Restart game"
               >
-                <ng-icon name="iconoir:restart" size="24px" class="align-self-center" />
+                <ng-icon name="iconoir:play" size="24px" class="align-self-center" />
               </button>
               } @else {
               <button
-                class="flex text-slate-500 rounded hover:text-slate-600 cursor-pointer"
+                class="flex text-red-400 rounded hover:text-red-600 cursor-pointer transition-colors"
                 (click)="endGame()"
                 title="Stop game"
               >
-                <ng-icon name="iconoir:xmark-circle" size="24px" class="align-self-center" />
+                <ng-icon name="iconoir:pause" size="24px" class="align-self-center" />
               </button>
               }
             </div>
@@ -82,15 +83,17 @@ import {
 
         <main class="md:col-span-2">
           <div class="bg-white shadow rounded-lg p-4 mb-4">
-            <h3 class="text-md font-medium mb-2">Add Round</h3>
+            <h3 class="text-md font-medium mb-2">Add Scoring Round or Item</h3>
             <div class="flex items-center gap-2 mb-4">
-              <input
-                class="flex-1 border rounded px-3 py-2"
-                [(ngModel)]="newRoundLabel"
-                placeholder="Round label (e.g. Round 1, Hand 5)"
+              <sc-input
+                name="round-label"
+                ariaLabel="Round or Item label (e.g. Round 1, Hand 5, etc.)"
+                [(value)]="newRoundLabel"
+                placeholder="Round or Item label (e.g. Round 1, Hand 5, etc.)"
                 (keyup.enter)="
                   !newRoundLabel.trim() || scoreCard.finishedAt ? undefined : addRound()
                 "
+                class="w-full"
               />
               <button
                 class="flex text-blue-500 rounded hover:text-blue-600 disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
@@ -131,18 +134,17 @@ import {
                     <ng-icon name="iconoir:minus" size="20px" />
                   </button>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                   @for (p of scoreCard.players; track p.id) {
-                  <label class="flex items-center gap-2">
-                    <span class="w-28 text-sm text-slate-700">{{ p.name }}</span>
-                    <input
-                      class="flex-1 border rounded px-2 py-1"
-                      type="number"
-                      [value]="r.scores[p.id]"
-                      (change)="updateScore(r.id, p.id, $event.target.value)"
-                      [disabled]="scoreCard.finishedAt"
-                    />
-                  </label>
+                  <sc-input
+                    [label]="p.name"
+                    name="player-{{ p.id }}-round-{{ r.id }}-score"
+                    ariaLabel="Score for {{ p.name }} in {{ r.label }}"
+                    type="number"
+                    [value]="r.scores[p.id]"
+                    (valueChange)="updateScore(r.id, p.id, $event)"
+                    [disabled]="!!scoreCard.finishedAt"
+                  />
                   }
                 </div>
               </div>

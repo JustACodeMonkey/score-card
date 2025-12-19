@@ -5,12 +5,23 @@ import { RouterLink } from '@angular/router';
 import { ScoreService } from './score.service';
 import { Player, ScoreCard } from './models';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { iconoirEditPencil, iconoirEye, iconoirPlay, iconoirPlusCircle } from '@ng-icons/iconoir';
+import {
+  iconoirEditPencil,
+  iconoirEye,
+  iconoirPlay,
+  iconoirPlusCircle,
+  iconoirXmark,
+} from '@ng-icons/iconoir';
+import { ScInput } from '../components/sc-input';
+import { ScTag } from '../components/sc-tag';
+import { ScButton } from '../components/sc-button';
 
 @Component({
   selector: 'score-card-editor',
-  imports: [CommonModule, FormsModule, RouterLink, NgIcon],
-  providers: [provideIcons({ iconoirEditPencil, iconoirEye, iconoirPlay, iconoirPlusCircle })],
+  imports: [CommonModule, FormsModule, RouterLink, NgIcon, ScInput, ScTag, ScButton],
+  providers: [
+    provideIcons({ iconoirEditPencil, iconoirEye, iconoirPlay, iconoirPlusCircle, iconoirXmark }),
+  ],
   template: `
     <div class="max-w-4xl mx-auto p-6">
       <header class="mb-6 flex flex-col">
@@ -26,27 +37,32 @@ import { iconoirEditPencil, iconoirEye, iconoirPlay, iconoirPlusCircle } from '@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <section class="bg-white shadow rounded-lg p-5">
           <h2 class="text-xl font-medium mb-3">Create New Score Card</h2>
-          <label class="block text-sm text-slate-700 mb-2">Name</label>
-          <input
-            class="w-full border border-slate-300 hover:border-slate-500 focus-within:border-slate-500 outline-0 focus-visible:ring-0 rounded px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            [(ngModel)]="name"
+          <sc-input
+            label="Game Name"
+            name="game-name"
+            ariaLabel="Game Name"
+            [(value)]="name"
             placeholder="e.g. Friday Euchre"
+            class="mb-3"
           />
 
           <div class="flex items-center gap-2 mb-3">
-            <input
-              class="flex-1 border rounded px-3 py-2 focus:outline-none"
-              [(ngModel)]="newPlayerName"
+            <sc-input
+              name="player-team-name"
+              ariaLabel="Player/Team Name"
+              [(value)]="newPlayerName"
               placeholder="Player/Team name"
               (keyup.enter)="addPlayer()"
+              class="w-full"
             />
-            <button
-              class="flex text-blue-500 rounded hover:text-blue-600 disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
+            <sc-button
               (click)="addPlayer()"
+              color="icon-only"
               title="Add Player/Team"
-            >
-              <ng-icon name="iconoir:plus-circle" size="24px" />
-            </button>
+              icon="iconoir:plus-circle"
+              iconSize="24px"
+              buttonClass="text-blue-500! hover:text-blue-600! rounded-full px-1! py-1!"
+            />
           </div>
 
           @if (players.length > 0) {
@@ -54,32 +70,27 @@ import { iconoirEditPencil, iconoirEye, iconoirPlay, iconoirPlusCircle } from '@
             <h3 class="text-sm font-medium text-slate-700 mb-2">Players/Teams</h3>
             <div class="flex flex-wrap gap-2">
               @for (p of players; track p.id) {
-              <span
-                class="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full text-sm text-slate-800"
-              >
-                <span>{{ p.name }}</span>
-                <button
-                  class="text-slate-500 hover:text-rose-600 cursor-pointer"
-                  (click)="removeLocalPlayer(p.id)"
-                  title="Remove"
-                >
-                  &times;
-                </button>
-              </span>
+              <sc-tag
+                [label]="p.name"
+                (iconClick)="removeLocalPlayer(p.id)"
+                icon="iconoir:xmark"
+                ariaLabel="Remove {{ p.name }} from new score card"
+              />
               }
             </div>
           </div>
           }
 
           <div class="mt-4">
-            <button
-              class="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
+            <sc-button
+              color="secondary"
               (click)="create()"
               [disabled]="!canCreate"
+              icon="iconoir:plus-circle"
+              class="w-full"
             >
-              <ng-icon name="iconoir:plus-circle" size="24px" />
               Create Score Card
-            </button>
+            </sc-button>
           </div>
         </section>
 
@@ -101,19 +112,21 @@ import { iconoirEditPencil, iconoirEye, iconoirPlay, iconoirPlusCircle } from '@
               </div>
               <div class="flex items-center gap-1">
                 <a
-                  class="flex text-blue-500 hover:text-blue-600 hover:bg-slate-100 p-1"
+                  class="flex text-blue-500 hover:text-blue-600 hover:bg-slate-100 
+                  focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-gray-300 rounded-full p-1"
                   [routerLink]="['/score-cards', c.id, 'play']"
                   >@if (c.finishedAt) {
                   <ng-icon name="iconoir:eye" size="24px" class="align-self-center" /> } @else {
                   <ng-icon name="iconoir:play" size="24px" class="align-self-center" /> }</a
                 >
-                <button
-                  class="flex text-sm text-slate-500 rounded hover:text-slate-600 hover:bg-slate-100 p-1 cursor-pointer"
+                <sc-button
                   (click)="toggleManage(c.id)"
+                  color="icon-only"
                   title="Edit game settings"
-                >
-                  <ng-icon name="iconoir:edit-pencil" size="24px" class="align-self-center" />
-                </button>
+                  icon="iconoir:edit-pencil"
+                  iconSize="24px"
+                  buttonClass="text-slate-500! hover:text-slate-700! rounded-full px-1! py-1!"
+                />
               </div>
             </li>
             @if (expanded[c.id]) {
@@ -121,19 +134,13 @@ import { iconoirEditPencil, iconoirEye, iconoirPlay, iconoirPlusCircle } from '@
               <div class="text-sm text-slate-700 font-medium mb-2">Players/Teams</div>
               <div class="flex flex-wrap gap-2">
                 @for (p of c.players; track p.id) {
-                <span
-                  class="inline-flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 rounded text-sm"
-                >
-                  <span class="text-slate-800">{{ p.name }}</span>
-                  <button
-                    class="text-rose-600 hover:text-rose-800 ml-2 cursor-pointer"
-                    (click)="removePlayerFromCard(c.id, p.id)"
-                    [disabled]="c.finishedAt"
-                    title="Remove player/team"
-                  >
-                    &times;
-                  </button>
-                </span>
+                <sc-tag
+                  [label]="p.name"
+                  (iconClick)="removePlayerFromCard(c.id, p.id)"
+                  icon="iconoir:xmark"
+                  ariaLabel="Remove {{ p.name }}"
+                  [disabled]="!!c.finishedAt"
+                />
                 }
               </div>
             </li>
