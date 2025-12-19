@@ -75,20 +75,20 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
               [routerLink]="['/']"
             >
               <ng-icon name="iconoir:arrow-left-circle" size="20px" />
-              Back to Score Cards
+              Back to Games
             </a>
           </div>
         </aside>
 
         <main class="md:col-span-2">
-          <div class="bg-white shadow rounded-lg p-4 mb-4">
-            <h3 class="text-md font-medium mb-2">Add Scoring Round or Item</h3>
+          <div class="bg-white shadow rounded-lg p-4">
+            <h3 class="text-md font-medium mb-2">Add a round or line item</h3>
             <div class="flex items-center gap-2 mb-4">
               <sc-input
                 name="round-label"
-                ariaLabel="Round or Item label (e.g. Round 1, Hand 5, etc.)"
+                ariaLabel="Round or line item label (e.g. Round 1, Hand 5, etc.)"
                 [(value)]="newRoundLabel"
-                placeholder="Round or Item label (e.g. Round 1, Hand 5, etc.)"
+                placeholder="Round or line item (e.g. Round 1, Hand 5, etc.)"
                 (keyup.enter)="
                   !newRoundLabel.trim() || scoreCard.finishedAt ? undefined : addRound()
                 "
@@ -104,7 +104,7 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
             </div>
 
             <div class="flex items-center justify-between mb-2 mt-8">
-              <h3 class="text-md font-medium mb-2">Rounds</h3>
+              <h3 class="text-md font-medium mb-2">Rounds and Line Items</h3>
               <sc-icon-button
                 visual="ghost"
                 (click)="toggleRoundOrder()"
@@ -115,7 +115,7 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
             <div class="space-y-4">
               @for (r of (roundsNewestFirst ? scoreCard.rounds.slice().reverse() :
               scoreCard.rounds); track r.id) {
-              <div class="border rounded p-3">
+              <div class="border border-slate-200 rounded p-3">
                 <div class="flex items-center justify-between mb-2">
                   <div class="font-medium">{{ r.label }}</div>
                   <sc-icon-button

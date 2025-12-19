@@ -37,7 +37,7 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <section class="bg-white shadow rounded-lg p-5">
-          <h2 class="text-xl font-medium mb-3">Create New Score Card</h2>
+          <h2 class="text-xl font-medium mb-3">Start a new game</h2>
           <sc-input
             label="Game Name"
             name="game-name"
@@ -49,10 +49,11 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
 
           <div class="flex items-center gap-2 mb-3">
             <sc-input
-              name="player-team-name"
-              ariaLabel="Player/Team Name"
+              name="players-teams-name"
+              label="Add Players/Teams"
+              ariaLabel="Add Players/Teams"
               [(value)]="newPlayerName"
-              placeholder="Player/Team name"
+              [placeholder]="'Player/Team ' + (players.length + 1)"
               (keyup.enter)="addPlayer()"
               class="w-full"
             />
@@ -61,6 +62,7 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
               (click)="addPlayer()"
               title="Add Player/Team"
               icon="iconoir:plus-circle"
+              class="mt-5"
             />
           </div>
 
@@ -88,13 +90,13 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
               icon="iconoir:plus-circle"
               class="w-full"
             >
-              Create Score Card
+              Start Playing
             </sc-button>
           </div>
         </section>
 
         <section class="bg-white shadow rounded-lg p-5">
-          <h2 class="text-xl font-medium mb-3">Existing Score Cards</h2>
+          <h2 class="text-xl font-medium mb-3">Existing Games</h2>
           <ul class="space-y-3">
             @for (c of scoreCards; track c.id) {
             <li
