@@ -7,7 +7,7 @@ export const routes: Routes = [
       import('./score-card/score-card-editor.component').then((m) => m.ScoreCardEditor),
   },
   {
-    path: ':id',
+    path: 'games/:id',
     loadComponent: () =>
       import('./score-card/score-card-play.component').then((m) => m.ScoreCardPlay),
   },

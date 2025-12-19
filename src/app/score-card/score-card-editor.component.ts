@@ -113,7 +113,7 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
                 <a
                   class="flex text-blue-600 hover:text-blue-700
                   focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-gray-300 rounded-full p-1"
-                  [routerLink]="[c.id]"
+                  [routerLink]="['games', c.id]"
                   >@if (c.finishedAt) {
                   <ng-icon name="iconoir:eye" size="24px" class="align-self-center" /> } @else {
                   <ng-icon name="iconoir:play" size="24px" class="align-self-center" /> }</a
@@ -231,7 +231,7 @@ export class ScoreCardEditor {
     this.name = '';
     this.players = [];
     // navigate to the newly created game's play view
-    this.router.navigate([scoreCard.id]);
+    this.router.navigate(['games', scoreCard.id]);
   }
 
   // icon selection removed; single app logo at /public/score-card-icon.svg is used
