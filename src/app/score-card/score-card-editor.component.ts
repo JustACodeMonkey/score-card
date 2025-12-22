@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -21,154 +21,148 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
   selector: 'score-card-editor',
   imports: [CommonModule, FormsModule, RouterLink, NgIcon, ScInput, ScTag, ScButton, ScIconButton],
   providers: [
-    provideIcons({ iconoirEditPencil, iconoirEye, iconoirPlay, iconoirPlusCircle, iconoirXmark }),
+    provideIcons({
+      iconoirEditPencil,
+      iconoirEye,
+      iconoirPlay,
+      iconoirPlusCircle,
+      iconoirXmark,
+    }),
   ],
   template: `
-    <div class="max-w-4xl mx-auto p-6">
-      <header class="mb-6 flex flex-col">
-        <div class="flex items-center gap-2">
-          <img src="/score-card-icon.svg" alt="Score Card" class="h-10 w-10 rounded" />
-          <h1 class="text-3xl font-semibold text-slate-800">Score Cards</h1>
-        </div>
-        <p class="ml-12 text-sm text-slate-500">
-          Create and manage customizable score cards for any simple game.
-        </p>
-      </header>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section class="bg-white shadow rounded-lg p-5">
+        <h2 class="text-xl font-medium text-slate-800">New Game</h2>
+        <sc-input
+          label="Game Name"
+          name="game-name"
+          ariaLabel="Game Name"
+          [(value)]="name"
+          placeholder="e.g. Friday Euchre"
+          class="mb-3"
+        />
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <section class="bg-white shadow rounded-lg p-5">
-          <h2 class="text-xl font-medium mb-3">Start a new game</h2>
+        <div class="flex items-center gap-2 mb-3">
           <sc-input
-            label="Game Name"
-            name="game-name"
-            ariaLabel="Game Name"
-            [(value)]="name"
-            placeholder="e.g. Friday Euchre"
-            class="mb-3"
+            name="players-teams-name"
+            label="Add Players/Teams"
+            ariaLabel="Add Players/Teams"
+            [(value)]="newPlayerName"
+            [placeholder]="'Player/Team ' + (players.length + 1)"
+            (keyup.enter)="addPlayer()"
+            class="w-full"
           />
+          <sc-icon-button
+            visual="primary"
+            (click)="addPlayer()"
+            title="Add Player/Team"
+            icon="iconoir:plus-circle"
+            class="mt-5"
+          />
+        </div>
 
-          <div class="flex items-center gap-2 mb-3">
-            <sc-input
-              name="players-teams-name"
-              label="Add Players/Teams"
-              ariaLabel="Add Players/Teams"
-              [(value)]="newPlayerName"
-              [placeholder]="'Player/Team ' + (players.length + 1)"
-              (keyup.enter)="addPlayer()"
-              class="w-full"
+        @if (players.length > 0) {
+        <div class="mb-4">
+          <h3 class="text-sm font-medium text-slate-700 mb-2">Players/Teams</h3>
+          <div class="flex flex-wrap gap-2">
+            @for (p of players; track p.id) {
+            <sc-tag
+              [label]="p.name"
+              (iconClick)="removeLocalPlayer(p.id)"
+              icon="iconoir:xmark"
+              ariaLabel="Remove {{ p.name }} from new score card"
             />
-            <sc-icon-button
-              visual="primary"
-              (click)="addPlayer()"
-              title="Add Player/Team"
-              icon="iconoir:plus-circle"
-              class="mt-5"
-            />
+            }
           </div>
+        </div>
+        }
 
-          @if (players.length > 0) {
-          <div class="mb-4">
-            <h3 class="text-sm font-medium text-slate-700 mb-2">Players/Teams</h3>
+        <div class="mt-4">
+          <sc-button
+            visual="secondary"
+            (click)="create()"
+            [disabled]="!canCreate"
+            icon="iconoir:plus-circle"
+            class="w-full"
+          >
+            Start Playing
+          </sc-button>
+        </div>
+      </section>
+
+      <section class="bg-white shadow rounded-lg p-5">
+        <h2 class="text-xl font-medium mb-3">Existing Games</h2>
+        <ul class="space-y-3">
+          @for (c of scoreCards; track c.id) {
+          <li
+            class="flex items-center justify-between gap-4 p-3 border border-slate-200 rounded hover:bg-slate-50"
+          >
+            <div>
+              <div class="font-medium text-slate-800">{{ c.name }}</div>
+              <div class="text-sm text-slate-500">{{ c.players.length }} players/teams</div>
+              @if (c.updatedAt) {
+              <div class="text-xs text-slate-400 mt-1">
+                Updated: {{ c.updatedAt | date : 'short' }}
+              </div>
+              }
+            </div>
+            <div class="flex items-center gap-1">
+              <a
+                class="flex text-blue-600 hover:text-blue-700
+                  focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-gray-300 rounded-full p-1"
+                [routerLink]="['games', c.id]"
+                >@if (c.finishedAt) {
+                <ng-icon name="iconoir:eye" size="24px" class="align-self-center" /> } @else {
+                <ng-icon name="iconoir:play" size="24px" class="align-self-center" /> }</a
+              >
+              <sc-icon-button
+                visual="ghost"
+                (click)="toggleManage(c.id)"
+                title="Edit game settings"
+                [icon]="expanded[c.id] ? 'iconoir:xmark' : 'iconoir:edit-pencil'"
+              />
+            </div>
+          </li>
+          @if (expanded[c.id]) {
+          <li class="p-3 border border-slate-200 rounded bg-slate-50">
+            <div class="text-sm text-slate-700 font-medium mb-2">Players/Teams</div>
             <div class="flex flex-wrap gap-2">
-              @for (p of players; track p.id) {
+              @for (p of c.players; track p.id) {
               <sc-tag
                 [label]="p.name"
-                (iconClick)="removeLocalPlayer(p.id)"
+                (iconClick)="removePlayerFromCard(c.id, p.id)"
                 icon="iconoir:xmark"
-                ariaLabel="Remove {{ p.name }} from new score card"
+                ariaLabel="Remove {{ p.name }}"
+                [disabled]="!!c.finishedAt"
               />
               }
             </div>
-          </div>
-          }
 
-          <div class="mt-4">
-            <sc-button
-              visual="secondary"
-              (click)="create()"
-              [disabled]="!canCreate"
-              icon="iconoir:plus-circle"
-              class="w-full"
-            >
-              Start Playing
-            </sc-button>
-          </div>
-        </section>
+            <div class="mt-4 border border-red-300 bg-red-50 p-3 rounded">
+              <div class="text-sm font-medium text-red-800 mb-1">Danger Zone</div>
+              <p class="text-xs mb-3">
+                Deleting a game will remove all rounds and scores. This cannot be undone.
+              </p>
 
-        <section class="bg-white shadow rounded-lg p-5">
-          <h2 class="text-xl font-medium mb-3">Existing Games</h2>
-          <ul class="space-y-3">
-            @for (c of scoreCards; track c.id) {
-            <li
-              class="flex items-center justify-between gap-4 p-3 border border-slate-200 rounded hover:bg-slate-50"
-            >
-              <div>
-                <div class="font-medium text-slate-800">{{ c.name }}</div>
-                <div class="text-sm text-slate-500">{{ c.players.length }} players/teams</div>
-                @if (c.updatedAt) {
-                <div class="text-xs text-slate-400 mt-1">
-                  Updated: {{ c.updatedAt | date : 'short' }}
-                </div>
-                }
+              @if (!confirmDelete[c.id]) {
+              <div class="flex gap-2">
+                <sc-button visual="danger" (click)="confirmDeleteCard(c.id)" title="Delete game">
+                  Delete Game
+                </sc-button>
               </div>
-              <div class="flex items-center gap-1">
-                <a
-                  class="flex text-blue-600 hover:text-blue-700
-                  focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-gray-300 rounded-full p-1"
-                  [routerLink]="['games', c.id]"
-                  >@if (c.finishedAt) {
-                  <ng-icon name="iconoir:eye" size="24px" class="align-self-center" /> } @else {
-                  <ng-icon name="iconoir:play" size="24px" class="align-self-center" /> }</a
-                >
-                <sc-icon-button
-                  visual="ghost"
-                  (click)="toggleManage(c.id)"
-                  title="Edit game settings"
-                  [icon]="expanded[c.id] ? 'iconoir:xmark' : 'iconoir:edit-pencil'"
-                />
+              } @else {
+              <div class="flex gap-2">
+                <sc-button visual="danger" (click)="deleteCard(c.id)" title="Confirm delete">
+                  Confirm Delete
+                </sc-button>
+                <sc-button visual="secondary" (click)="cancelDeleteCard(c.id)">Cancel</sc-button>
               </div>
-            </li>
-            @if (expanded[c.id]) {
-            <li class="p-3 border border-slate-200 rounded bg-slate-50">
-              <div class="text-sm text-slate-700 font-medium mb-2">Players/Teams</div>
-              <div class="flex flex-wrap gap-2">
-                @for (p of c.players; track p.id) {
-                <sc-tag
-                  [label]="p.name"
-                  (iconClick)="removePlayerFromCard(c.id, p.id)"
-                  icon="iconoir:xmark"
-                  ariaLabel="Remove {{ p.name }}"
-                  [disabled]="!!c.finishedAt"
-                />
-                }
-              </div>
-
-              <div class="mt-4 border border-red-300 bg-red-50 p-3 rounded">
-                <div class="text-sm font-medium text-red-800 mb-1">Danger Zone</div>
-                <p class="text-xs mb-3">
-                  Deleting a game will remove all rounds and scores. This cannot be undone.
-                </p>
-
-                @if (!confirmDelete[c.id]) {
-                <div class="flex gap-2">
-                  <sc-button visual="danger" (click)="confirmDeleteCard(c.id)" title="Delete game">
-                    Delete Game
-                  </sc-button>
-                </div>
-                } @else {
-                <div class="flex gap-2">
-                  <sc-button visual="danger" (click)="deleteCard(c.id)" title="Confirm delete">
-                    Confirm Delete
-                  </sc-button>
-                  <sc-button visual="secondary" (click)="cancelDeleteCard(c.id)">Cancel</sc-button>
-                </div>
-                }
-              </div>
-            </li>
-            } }
-          </ul>
-        </section>
-      </div>
+              }
+            </div>
+          </li>
+          } }
+        </ul>
+      </section>
     </div>
   `,
 })

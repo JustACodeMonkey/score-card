@@ -1,1 +1,168 @@
-<router-outlet />
+<header
+  class="fixed top-0 left-0 right-0 z-10 py-6 flex flex-col bg-white shadow-sm h-27 transition-all duration-200"
+  [class.py-2!]="isHeaderSticky()"
+  [class.h-[56px]!]="isHeaderSticky()"
+>
+  <div class="flex items-center justify-between gap-4 max-w-4xl mx-auto px-6 w-full">
+    <div class="flex items-center gap-2">
+      <img src="/score-card-icon.svg" alt="Score Card" class="h-10 w-10 rounded" />
+      <h1 class="text-3xl font-semibold text-slate-800">Score Cards</h1>
+    </div>
+    <sc-icon-button
+      visual="primary"
+      aria-label="Help"
+      (click)="scrollToFooter()"
+      icon="iconoir:info-circle"
+    />
+  </div>
+  <p
+    class="text-sm text-slate-500 max-w-4xl mx-auto px-6 w-full transition-all duration-200"
+    [class.opacity-0]="isHeaderSticky()"
+    [class.h-0]="isHeaderSticky()"
+  >
+    Create customizable score cards for your games
+  </p>
+</header>
+<div class="max-w-4xl mx-auto p-6 mt-28" [class.mt-16]="isHeaderSticky()">
+  <router-outlet />
+
+  <footer #footer class="mt-6 mb-6 text-center text-sm text-gray-500">
+    <section class="flex flex-col gap-4 bg-white shadow rounded-lg p-5 text-left mb-6">
+      <h2 class="text-lg font-semibold">Instructions</h2>
+      <h4 class="flex items-center gap-2 font-semibold">
+        <div class="bg-gray-300 h-px w-2"></div>
+        <span class="shrink-0">Game Creation</span>
+        <div class="bg-gray-300 h-px grow"></div>
+      </h4>
+      <ol class="list-decimal list-inside space-y-2 text-sm">
+        <li>To start a new game, enter a game name and add at least one player or team.</li>
+        <li>
+          Use the
+          <ng-icon
+            name="iconoir:plus-circle"
+            size="16px"
+            color="var(--color-blue-600)"
+            class="align-text-bottom!"
+          />
+          button to add players/teams.
+        </li>
+        <li>
+          When ready, click the &quot;Start Playing&quot; button to create the game and begin adding
+          rounds and scores.
+        </li>
+        <li>
+          Existing games are listed in the &quot;Existing Games&quot; section. Click the
+          <ng-icon
+            name="iconoir:eye"
+            size="16px"
+            color="var(--color-blue-600)"
+            class="align-text-bottom!"
+          />
+          or
+          <ng-icon
+            name="iconoir:play"
+            size="16px"
+            color="var(--color-blue-600)"
+            class="align-text-bottom!"
+          />
+          buttons to view a paused game or continue a game. Click the
+          <ng-icon
+            name="iconoir:edit-pencil"
+            size="16px"
+            color="var(--color-gray-600)"
+            class="align-text-bottom!"
+          />
+          button to manage players or delete a game.
+        </li>
+      </ol>
+
+      <h4 class="flex items-center gap-2 font-semibold">
+        <div class="bg-gray-300 h-px w-2"></div>
+        <span class="shrink-0">Game Play</span>
+        <div class="bg-gray-300 h-px grow"></div>
+      </h4>
+      <ol class="list-decimal list-inside space-y-2 text-sm">
+        <li>
+          Click the
+          <ng-icon
+            name="iconoir:arrow-left-circle"
+            size="16px"
+            color="var(--color-blue-600)"
+            class="align-text-bottom!"
+          />
+          button to return to the game creation screen
+        </li>
+        <li>
+          Click the
+          <ng-icon
+            name="iconoir:pause"
+            size="16px"
+            color="var(--color-rose-600)"
+            class="align-text-bottom!"
+          />
+          button to finish/pause a game and the
+          <ng-icon
+            name="iconoir:play"
+            size="16px"
+            color="var(--color-blue-600)"
+            class="align-text-bottom!"
+          />
+          button to resume a paused game.
+        </li>
+        <li>
+          Add a round by entering the scoring item name (e.g. Hand 1 (for a hand in Euchure or
+          Bridge) or Military (for the red military count in Seven Wonders)) and clicking the
+          <ng-icon
+            name="iconoir:plus-circle"
+            size="16px"
+            color="var(--color-blue-600)"
+            class="align-text-bottom!"
+          />
+          button. This will create a group containging the names of each player/team.
+        </li>
+        <li>
+          You can sort the scoring groups by clicking the
+          <ng-icon
+            name="iconoir:sort-down"
+            size="16px"
+            color="var(--color-gray-600)"
+            class="align-text-bottom!"
+          />
+          or
+          <ng-icon
+            name="iconoir:sort-up"
+            size="16px"
+            color="var(--color-gray-600)"
+            class="align-text-bottom!"
+          />
+          buttons. By default, newly added scoring groups are added to the top of the score card.
+        </li>
+        <li>
+          To remove a scoring group, click the
+          <ng-icon
+            name="iconoir:minus"
+            size="16px"
+            color="var(--color-gray-600)"
+            class="align-text-bottom!"
+          />
+          button next to the scoring group name.
+        </li>
+        <li>
+          Enter the score for each player/team in the newly created round. Scores can be positive or
+          negative numbers.
+        </li>
+        <li>The total scores will automatically update as you enter scores for each round.</li>
+      </ol>
+
+      <div class="flex justify-end">
+        <sc-icon-button
+          visual="ghost"
+          (click)="scrollToTop()"
+          aria-label="Back to Top"
+          icon="iconoir:arrow-up-circle"
+        />
+      </div>
+    </section>
+    &copy; 2024 Score Card App
+  </footer>
+</div>
