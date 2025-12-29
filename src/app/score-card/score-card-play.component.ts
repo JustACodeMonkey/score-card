@@ -141,7 +141,7 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
       </main>
     </div>
     } @else {
-    <p class="text-center text-slate-600">Score card not found.</p>
+    <p class="text-center text-slate-600">Game score card not found.</p>
     }
   `,
 })

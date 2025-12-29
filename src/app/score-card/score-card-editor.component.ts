@@ -70,7 +70,7 @@ import { ScIconButton } from '../components/sc-icon-button/sc-icon-button';
               [label]="p.name"
               (iconClick)="removeLocalPlayer(p.id)"
               icon="iconoir:xmark"
-              ariaLabel="Remove {{ p.name }} from new score card"
+              ariaLabel="Remove {{ p.name }} from new game score card"
             />
             }
           </div>
