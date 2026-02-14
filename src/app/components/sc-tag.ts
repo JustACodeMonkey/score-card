@@ -1,10 +1,16 @@
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgIcon } from '@ng-icons/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { iconoirXmark } from '@ng-icons/iconoir';
 
 @Component({
   selector: 'sc-tag',
   imports: [CommonModule, NgIcon],
+  providers: [
+    provideIcons({
+      iconoirXmark,
+    }),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <span
@@ -14,18 +20,18 @@ import { NgIcon } from '@ng-icons/core';
     >
       <span class="leading-none">{{ label() }}</span>
       @if (icon()) {
-      <button
-        type="button"
-        class="flex items-center justify-center w-5 h-5 text-slate-600 p-0 cursor-pointer rounded-full transition-colors
+        <button
+          type="button"
+          class="flex items-center justify-center w-5 h-5 text-slate-600 p-0 cursor-pointer rounded-full transition-colors
         outline-gray-300
         hover:text-slate-800 
         focus-visible:outline-1"
-        (click)="onIconClick($event)"
-        [disabled]="disabled()"
-        [attr.aria-label]="ariaLabel() || 'Action for ' + label()"
-      >
-        <ng-icon [name]="icon()" size="16px" />
-      </button>
+          (click)="onIconClick($event)"
+          [disabled]="disabled()"
+          [attr.aria-label]="ariaLabel() || 'Action for ' + label()"
+        >
+          <ng-icon [name]="icon()" size="16px" />
+        </button>
       }
     </span>
   `,

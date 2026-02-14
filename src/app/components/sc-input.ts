@@ -1,4 +1,12 @@
-import { Component, ChangeDetectionStrategy, input, output, model } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  output,
+  model,
+  viewChild,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -7,8 +15,11 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <label class="flex flex-col gap-1 text-sm text-slate-700">
-      @if (label()) { <span class="line-clamp-1">{{ label() }}</span> }
+      @if (label()) {
+        <span class="line-clamp-1">{{ label() }}</span>
+      }
       <input
+        #nativeInput
         [attr.name]="name()"
         [type]="type()"
         [inputMode]="inputMode()"
@@ -29,6 +40,12 @@ import { CommonModule } from '@angular/common';
   host: { class: 'block' },
 })
 export class ScInput {
+  protected nativeInput = viewChild<ElementRef<HTMLInputElement>>('nativeInput');
+
+  focus() {
+    this.nativeInput()?.nativeElement.focus();
+  }
+
   readonly value = model<string | number>('');
 
   readonly placeholder = input<string>('');
